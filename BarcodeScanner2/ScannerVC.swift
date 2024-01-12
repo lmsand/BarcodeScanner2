@@ -88,7 +88,10 @@ final class ScannerVC: UIViewController {
         previewLayer!.videoGravity = .resizeAspectFill    // fill view but keep aspect ratio
         view.layer.addSublayer(previewLayer!)
         
-        captureSession.startRunning()
+     
+        DispatchQueue.global().async { [weak self] in
+            self?.captureSession.startRunning()
+        }
     }
     
 }
