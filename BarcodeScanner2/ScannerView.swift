@@ -12,6 +12,8 @@ import SwiftUI
 
 struct ScannerView: UIViewControllerRepresentable {
     
+    @Binding var scannedCode: String // updates scannedCode variable in the BarcodeScannerView
+    
     func makeUIViewController(context: Context) -> ScannerVC {
         ScannerVC(scannerDelegate: context.coordinator)
     }
@@ -19,7 +21,7 @@ struct ScannerView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: ScannerVC, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
-        Coordinator()       // now coordinator is listening to scanner vc
+        Coordinator(scannerView: self)       // now coordinator is listening to scanner vc
     }
     
     // 1. created coordinator,
@@ -28,8 +30,16 @@ struct ScannerView: UIViewControllerRepresentable {
     // 4. then do something with the info we get
     
     final class Coordinator: NSObject, ScannerVCDelegate {
+        
+        // create connection to scanneView
+        private let scannerView: ScannerView
+        
+        init(scannerView: ScannerView) {
+            self.scannerView = scannerView
+        }
+        
         func didFind(barcode: String) {
-            print(barcode)
+            scannerView.scannedCode = barcode    // telling scanner view what the barcode is
         }
         
         func didSurface(error: CameraError) {
@@ -45,5 +55,5 @@ struct ScannerView: UIViewControllerRepresentable {
 }
 
 #Preview {
-    ScannerView()
+    ScannerView(scannedCode: .constant("1234567"))
 }
